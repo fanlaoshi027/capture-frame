@@ -143,6 +143,8 @@ internal sealed class FrameForm : Form
     {
         if (passthrough || e.Button != MouseButtons.Left) return;
         dragging = true; dragStart = Cursor.Position; formStart = Location; resizeMode = HitTest(e.Location);
+        // Shift + drag moves the whole frame, even when starting on an edge or corner.
+        if ((ModifierKeys & Keys.Shift) != 0) resizeMode = ResizeMode.Move;
         if (resizeMode == ResizeMode.Move && (ModifierKeys & Keys.Shift) == 0) { dragging = false; return; }
         Capture = true;
     }
