@@ -1,0 +1,30 @@
+name: Build Native Windows EXE
+on:
+  push:
+    branches: ["capture-frame-native"]
+    paths:
+      - "native/**"
+      - ".github/workflows/build-native.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build native Win32 executable
+        shell: pwsh
+        run: |
+          $vswhere = "$env:ProgramFiles(x86)\Microsoft Visual Studio\Installer\vswhere.exe"
+          $vs = & $vswhere -latest -products * -property installationPath
+          $vcvars = Join-Path $vs "VC\Auxiliary\Build\vcvars64.bat"
+          cmd /c "\`"$vcvars\`" >nul && cl /nologo /O1 /Os /MT /DUNICODE /D_UNICODE native\main.cpp /link /SUBSYSTEM:WINDOWS /OPT:REF /OPT:ICF /OUT:CaptureFrame.exe"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Upload native EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: CaptureFrame-native-win-x64
+          path: CaptureFrame.exe
+          if-no-files-found: error
+          retention-days: 30
