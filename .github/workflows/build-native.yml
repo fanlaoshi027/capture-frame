@@ -20,7 +20,7 @@ jobs:
       - name: Build native Win32 executable
         shell: pwsh
         run: |
-          cl /nologo /O1 /Os /MT /DUNICODE /D_UNICODE native\main.cpp /link /SUBSYSTEM:WINDOWS /OPT:REF /OPT:ICF user32.lib gdi32.lib shell32.lib /OUT:CaptureFrame.exe
+          cl /nologo /utf-8 /O1 /Os /MT /DUNICODE /D_UNICODE native\main.cpp /link /SUBSYSTEM:WINDOWS /OPT:REF /OPT:ICF user32.lib gdi32.lib shell32.lib /OUT:CaptureFrame.exe
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Upload native EXE
         uses: actions/upload-artifact@v4
